@@ -464,10 +464,10 @@ error_t sx1278_send(sx1278_t * trx, uint8_t * buf, size_t size) {
 }
 
 error_t sx1278_recv(sx1278_t * trx, uint8_t * buf, size_t * size, timeout_t * timeout) {
-  ASSERT_RETURN(trx && buf && size && timeout, E_NULL);
+  ASSERT_RETURN(trx && buf && size, E_NULL);
   ASSERT_RETURN(*size, E_EMPTY);
 
-  log_info("Receive %d", timeout->duration);
+  log_info("Receive %d", timeout ? timeout->duration : 0);
 
   uint8_t data;
 
