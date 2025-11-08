@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.30)
 set(PROJECT_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(TOOLCHAIN_DIR "${CMAKE_CURRENT_LIST_DIR}/toolchain")
 
-set(PROJECT_NAME     linux-ra02)
+set(PROJECT_NAME     linux-sx1278)
 set(CMAKE_C_STANDARD 17)
 set(PROJECT_VERBOSE  0)
 

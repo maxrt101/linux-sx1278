@@ -54,11 +54,11 @@ jobs:
     - name: Archive driver library artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ra02-library-so
-        path: build/liblinux-ra02.so
+        name: sx1278-library-so
+        path: build/liblinux-sx1278.so
 
     - name: Archive python bindings artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ra02-py
-        path: bindings/ra02.py
+        name: sx1278-py
+        path: bindings/sx1278.py
