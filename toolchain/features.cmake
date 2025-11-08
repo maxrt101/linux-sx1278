@@ -17,8 +17,9 @@ endmacro()
 
 set(FEATURE_TOGGLES
     LD_LOADER_PATH="/lib/ld-linux-aarch64.so.1"
-    LOG_ENABLE_RA02=0
-    LOG_ENABLE_MAIN=0
+    LOG_ENABLE_sx1278=0
+    LOG_ENABLE_main=0
+    USE_RA02_EXT_LOG_SEND_RECV=0
 )
 
 foreach (feature ${FEATURE_TOGGLES})
