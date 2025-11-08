@@ -127,7 +127,7 @@ def error_check(err: int):
 
     :param err: Value from error_t enum
     """
-    if err != 0 and err != None:
+    if err != 0:
         if err in EXCEPTIONS:
             raise EXCEPTIONS[err]
         else:
@@ -292,6 +292,7 @@ class sx1278_t(ctypes.Structure):
     _fields_ = [
         ('spi', ctypes.POINTER(spi_t)),
         ('irq_flags', ctypes.c_uint8),
+        ('last_rssi', ctypes.c_int8),
     ]
 
 class Sx1278:

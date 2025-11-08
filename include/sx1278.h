@@ -24,7 +24,7 @@ extern "C" {
  * Timeout in ms for TX_DONE flag to get up after TX was initiated
  */
 #ifndef SX1278_SEND_IRQ_TIMEOUT
-#define SX1278_SEND_IRQ_TIMEOUT 500
+#define SX1278_SEND_IRQ_TIMEOUT 1000
 #endif
 
 /**
