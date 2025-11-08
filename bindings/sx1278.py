@@ -127,7 +127,7 @@ def error_check(err: int):
 
     :param err: Value from error_t enum
     """
-    if err != 0:
+    if err != 0 and err != None:
         if err in EXCEPTIONS:
             raise EXCEPTIONS[err]
         else:

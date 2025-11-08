@@ -247,7 +247,7 @@ error_t sx1278_init(sx1278_t * trx, sx1278_cfg_t * cfg) {
   ERROR_CHECK_RETURN(sx1278_set_power(trx, SX1278_INIT_POWER)); /* Set init output power */
   ERROR_CHECK_RETURN(sx1278_set_ocp(trx, SX1278_DEFAULT_OCP_MA)); /* Set OverCurrentProtection */
   ERROR_CHECK_RETURN(sx1278_write_reg(trx, SX1278_REG_LNA, 0x23)); /* Set LNA */
-  ERROR_CHECK_RETURN(sx1278_write_reg(trx, SX1278_LORA_REG_MODEM_CFG_2, 1)); /* Reset Modem Cfg 1 */
+  ERROR_CHECK_RETURN(sx1278_write_reg(trx, SX1278_LORA_REG_MODEM_CFG_1, 0)); /* Reset Modem Cfg 1 */
   ERROR_CHECK_RETURN(sx1278_write_reg(trx, SX1278_LORA_REG_MODEM_CFG_2, 0)); /* Reset Modem Cfg 2 */
   ERROR_CHECK_RETURN(sx1278_set_implicit_header_mode(trx, false)); /* Set implicit header mode */
   ERROR_CHECK_RETURN(sx1278_set_rx_symbol_timeout(trx, 0x2FF)); /* Set RX Symbol Timeout */
