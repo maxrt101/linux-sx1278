@@ -51,8 +51,8 @@ error_t spi_init(spi_t * spi, spi_cfg_t * cfg, const char * dev) {
 error_t spi_deinit(spi_t * spi) {
   ASSERT_RETURN(spi, E_NULL);
 
-  close(spi->fd);
-  spi->fd = 0;
+  // close(spi->fd);
+  // spi->fd = 0;
 
   return E_OK;
 }
