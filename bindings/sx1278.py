@@ -194,7 +194,8 @@ class Spi:
         Deinitializes SPI
         """
 
-        error_check(RA02_DYNLIB.spi_deinit(ctypes.byref(self.spi)))
+        if self.spi.fd != 0:
+            error_check(RA02_DYNLIB.spi_deinit(ctypes.byref(self.spi)))
 
     def transceive(self, data: list[int]) -> list[int]:
         """
