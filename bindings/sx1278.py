@@ -1,26 +1,26 @@
 # =========================================================================
 #
-# :file: ra02.py
+# :file: sx1278.py
 # :date: 20-05-2025
 # :author: Maksym Tkachuk <max.r.tkachuk@gmail.com>
 #
-# LinuxRA02 Python bindings to ra02 shared library
+# LinuxRA02 Python bindings to sx1278 shared library
 #
 # Provides API for RA02 RF module control, SPI & Timeout abstractions
 # Basically a thin FFI interface to C driver implementation
 #
 # Example:
 #   # Initialize the library, SPI & RA02 module
-#   import ra02
-#   ra02.__init__('./linux_ra02.so')
-#   spi = ra02.Spi('/dev/spidev0.0')
-#   rf = ra02.Ra02(spi)
+#   import sx1278
+#   sx1278.__init__('./linux_sx1278.so')
+#   spi = sx1278.Spi('/dev/spidev0.0')
+#   rf = sx1278.Sx1278(spi)
 #
 #   # Send some bytes
 #   rf.send(bytes([1, 2, 3, 4, 5]))
 #
 #   # Run receive for 5s
-#   rf.recv(ra02.Timeout(5000))
+#   rf.recv(sx1278.Timeout(5000))
 #
 # =========================================================================
 
@@ -65,11 +65,11 @@ class DynamicLibrary:
         if self.dynlib:
             return getattr(self.dynlib, item)
         else:
-            raise LibraryUninitializedException('RA02 DynamicLibrary in uninitialized. Call ra02.__init__')
+            raise LibraryUninitializedException('RA02 DynamicLibrary in uninitialized. Call sx1278.__init__')
 
 
 
-# Global (for module) handle to opened ra02 shared library
+# Global (for module) handle to opened sx1278 shared library
 RA02_DYNLIB = DynamicLibrary()
 
 
@@ -122,7 +122,7 @@ EXCEPTIONS = {
 
 def error_check(err: int):
     """
-    Checks error code, returned by ra02.h/spi.h APIs
+    Checks error code, returned by sx1278.h/spi.h APIs
     and throws a mirroring exception, if error code is not 0 (E_OK)
 
     :param err: Value from error_t enum
@@ -276,26 +276,26 @@ class Timeout:
         RA02_DYNLIB.timeout_expire(ctypes.byref(self.timeout))
 
 
-class ra02_cfg_t(ctypes.Structure):
+class sx1278_cfg_t(ctypes.Structure):
     """
-    Defines RA02 config from ra02.h
+    Defines RA02 config from sx1278.h
     """
     _fields_ = [
         ('spi', ctypes.POINTER(spi_t)),
     ]
 
-class ra02_t(ctypes.Structure):
+class sx1278_t(ctypes.Structure):
     """
-    Defines RA02 context from ra02.h
+    Defines RA02 context from sx1278.h
     """
     _fields_ = [
         ('spi', ctypes.POINTER(spi_t)),
         ('irq_flags', ctypes.c_uint8),
     ]
 
-class Ra02:
+class Sx1278:
     """
-    Encapsulates ra02_t and ra02_* APIs from ra02.h
+    Encapsulates sx1278_t and sx1278_* APIs from sx1278.h
     """
 
     # Max packet size in bytes
@@ -308,7 +308,7 @@ class Ra02:
         :param spi: Initializes SPI handle. Can be None, but won't be initialized
         """
 
-        self.ra02 = ra02_t()
+        self.sx1278 = sx1278_t()
 
         if spi:
             self.init(spi)
@@ -329,30 +329,30 @@ class Ra02:
 
         self.spi = spi
 
-        cfg = ra02_cfg_t(spi=ctypes.pointer(spi.spi))
+        cfg = sx1278_cfg_t(spi=ctypes.pointer(spi.spi))
 
-        error_check(RA02_DYNLIB.ra02_init(ctypes.byref(self.ra02), ctypes.byref(cfg)))
+        error_check(RA02_DYNLIB.sx1278_init(ctypes.byref(self.sx1278), ctypes.byref(cfg)))
 
     def deinit(self):
         """
         Deinitializes RA02 driver
         """
 
-        error_check(RA02_DYNLIB.ra02_deinit(ctypes.byref(self.ra02)))
+        error_check(RA02_DYNLIB.sx1278_deinit(ctypes.byref(self.sx1278)))
 
     def reset(self):
         """
         Resets RA02
         """
 
-        error_check(RA02_DYNLIB.ra02_reset(ctypes.byref(self.ra02)))
+        error_check(RA02_DYNLIB.sx1278_reset(ctypes.byref(self.sx1278)))
 
     def sleep(self):
         """
         Transitions RA02 to sleep mode
         """
 
-        error_check(RA02_DYNLIB.ra02_sleep(ctypes.byref(self.ra02)))
+        error_check(RA02_DYNLIB.sx1278_sleep(ctypes.byref(self.sx1278)))
 
     def set_freq(self, freq: int):
         """
@@ -361,7 +361,7 @@ class Ra02:
         :param freq: Operating frequency in kHz
         """
 
-        error_check(RA02_DYNLIB.ra02_set_freq(ctypes.byref(self.ra02), ctypes.c_uint32(freq)))
+        error_check(RA02_DYNLIB.sx1278_set_freq(ctypes.byref(self.sx1278), ctypes.c_uint32(freq)))
 
     def get_power(self):
         """
@@ -371,7 +371,7 @@ class Ra02:
         """
 
         db = ctypes.c_uint8()
-        error_check(RA02_DYNLIB.ra02_get_power(ctypes.byref(self.ra02), ctypes.byref(db)))
+        error_check(RA02_DYNLIB.sx1278_get_power(ctypes.byref(self.sx1278), ctypes.byref(db)))
         return db.value
 
     def set_power(self, db: int):
@@ -381,7 +381,7 @@ class Ra02:
         :param db: output power in db
         """
 
-        error_check(RA02_DYNLIB.ra02_set_power(ctypes.byref(self.ra02), ctypes.c_uint32(db)))
+        error_check(RA02_DYNLIB.sx1278_set_power(ctypes.byref(self.sx1278), ctypes.c_uint32(db)))
 
     def set_sync_word(self, sync_word: int):
         """
@@ -390,7 +390,7 @@ class Ra02:
         :param sync_word: Sync word
         """
 
-        error_check(RA02_DYNLIB.ra02_set_sync_word(ctypes.byref(self.ra02), ctypes.c_uint32(sync_word)))
+        error_check(RA02_DYNLIB.sx1278_set_sync_word(ctypes.byref(self.sx1278), ctypes.c_uint32(sync_word)))
 
     def set_baudrate(self, baudrate: int):
         """
@@ -399,7 +399,7 @@ class Ra02:
         :param baudrate: Baudrate
         """
 
-        error_check(RA02_DYNLIB.ra02_set_baudrate(ctypes.byref(self.ra02), ctypes.c_uint32(baudrate)))
+        error_check(RA02_DYNLIB.sx1278_set_baudrate(ctypes.byref(self.sx1278), ctypes.c_uint32(baudrate)))
 
     def set_bandwidth(self, bandwidth: int):
         """
@@ -408,7 +408,7 @@ class Ra02:
         :param bandwidth: Bandwidth
         """
 
-        error_check(RA02_DYNLIB.ra02_set_bandwidth(ctypes.byref(self.ra02), ctypes.c_uint32(bandwidth)))
+        error_check(RA02_DYNLIB.sx1278_set_bandwidth(ctypes.byref(self.sx1278), ctypes.c_uint32(bandwidth)))
 
     def set_preamble(self, preamble: int):
         """
@@ -416,7 +416,7 @@ class Ra02:
 
         :param preamble: Preamble length in bytes
         """
-        error_check(RA02_DYNLIB.ra02_set_preamble(ctypes.byref(self.ra02), ctypes.c_uint32(preamble)))
+        error_check(RA02_DYNLIB.sx1278_set_preamble(ctypes.byref(self.sx1278), ctypes.c_uint32(preamble)))
 
     def set_sf(self, sf: int):
         """
@@ -424,7 +424,7 @@ class Ra02:
 
         :param sf: Spreading Factor
         """
-        error_check(RA02_DYNLIB.ra02_set_sf(ctypes.byref(self.ra02), ctypes.c_uint8(sf)))
+        error_check(RA02_DYNLIB.sx1278_set_sf(ctypes.byref(self.sx1278), ctypes.c_uint8(sf)))
 
     def get_rssi(self):
         """
@@ -434,7 +434,7 @@ class Ra02:
         """
 
         rssi = ctypes.c_uint8()
-        error_check(RA02_DYNLIB.ra02_get_rssi(ctypes.byref(self.ra02), ctypes.byref(rssi)))
+        error_check(RA02_DYNLIB.sx1278_get_rssi(ctypes.byref(self.sx1278), ctypes.byref(rssi)))
         return rssi.value
 
     def poll_irq_flags(self):
@@ -443,7 +443,7 @@ class Ra02:
         Reads value of RA02_LORA_REG_IRQ_FLAGS
         """
 
-        RA02_DYNLIB.ra02_poll_irq_flags(ctypes.byref(self.ra02))
+        RA02_DYNLIB.sx1278_poll_irq_flags(ctypes.byref(self.sx1278))
 
     def send(self, data: bytes):
         """
@@ -454,7 +454,7 @@ class Ra02:
 
         buf = (ctypes.c_uint8 * len(data))(*data)
 
-        error_check(RA02_DYNLIB.ra02_send(ctypes.byref(self.ra02), buf, ctypes.c_size_t(len(data))))
+        error_check(RA02_DYNLIB.sx1278_send(ctypes.byref(self.sx1278), buf, ctypes.c_size_t(len(data))))
 
     def recv(self, timeout: Timeout) -> bytes:
         """
@@ -467,7 +467,7 @@ class Ra02:
         buf = (ctypes.c_uint8 * self.MAX_PAYLOAD)()
         size = ctypes.c_size_t(self.MAX_PAYLOAD)
 
-        error_check(RA02_DYNLIB.ra02_recv(ctypes.byref(self.ra02), buf, ctypes.byref(size), ctypes.byref(timeout.timeout)))
+        error_check(RA02_DYNLIB.sx1278_recv(ctypes.byref(self.sx1278), buf, ctypes.byref(size), ctypes.byref(timeout.timeout)))
 
         return bytes(buf[:size.value])
 
@@ -527,77 +527,77 @@ def __init__(dynlib_path: str):
     RA02_DYNLIB.timeout_expire.argtypes = [ctypes.POINTER(timeout_t)]
     RA02_DYNLIB.timeout_expire.restype = None
 
-    # ra02.h
+    # sx1278.h
 
-    # error_t ra02_init(ra02_t * ra02, ra02_cfg_t * cfg);
-    RA02_DYNLIB.ra02_init.argtypes = [ctypes.POINTER(ra02_t), ctypes.POINTER(ra02_cfg_t)]
-    RA02_DYNLIB.ra02_init.restype = ctypes.c_int
+    # error_t sx1278_init(sx1278_t * sx1278, sx1278_cfg_t * cfg);
+    RA02_DYNLIB.sx1278_init.argtypes = [ctypes.POINTER(sx1278_t), ctypes.POINTER(sx1278_cfg_t)]
+    RA02_DYNLIB.sx1278_init.restype = ctypes.c_int
 
-    # error_t ra02_deinit(ra02_t * ra02);
-    RA02_DYNLIB.ra02_deinit.argtypes = [ctypes.POINTER(ra02_t)]
-    RA02_DYNLIB.ra02_deinit.restype = ctypes.c_int
+    # error_t sx1278_deinit(sx1278_t * sx1278);
+    RA02_DYNLIB.sx1278_deinit.argtypes = [ctypes.POINTER(sx1278_t)]
+    RA02_DYNLIB.sx1278_deinit.restype = ctypes.c_int
 
-    # error_t ra02_reset(ra02_t * ra02);
-    RA02_DYNLIB.ra02_reset.argtypes = [ctypes.POINTER(ra02_t)]
-    RA02_DYNLIB.ra02_reset.restype = ctypes.c_int
+    # error_t sx1278_reset(sx1278_t * sx1278);
+    RA02_DYNLIB.sx1278_reset.argtypes = [ctypes.POINTER(sx1278_t)]
+    RA02_DYNLIB.sx1278_reset.restype = ctypes.c_int
 
-    # error_t ra02_sleep(ra02_t * ra02);
-    RA02_DYNLIB.ra02_sleep.argtypes = [ctypes.POINTER(ra02_t)]
-    RA02_DYNLIB.ra02_sleep.restype = ctypes.c_int
+    # error_t sx1278_sleep(sx1278_t * sx1278);
+    RA02_DYNLIB.sx1278_sleep.argtypes = [ctypes.POINTER(sx1278_t)]
+    RA02_DYNLIB.sx1278_sleep.restype = ctypes.c_int
 
-    # error_t ra02_set_freq(ra02_t * ra02, uint32_t khz);
-    RA02_DYNLIB.ra02_set_freq.argtypes = [ctypes.POINTER(ra02_t), ctypes.c_uint32]
-    RA02_DYNLIB.ra02_set_freq.restype = ctypes.c_int
+    # error_t sx1278_set_freq(sx1278_t * sx1278, uint32_t khz);
+    RA02_DYNLIB.sx1278_set_freq.argtypes = [ctypes.POINTER(sx1278_t), ctypes.c_uint32]
+    RA02_DYNLIB.sx1278_set_freq.restype = ctypes.c_int
 
-    # error_t ra02_get_power(ra02_t * ra02, uint8_t * db);
-    RA02_DYNLIB.ra02_get_power.argtypes = [ctypes.POINTER(ra02_t), ctypes.POINTER(ctypes.c_uint8)]
-    RA02_DYNLIB.ra02_get_power.restype = ctypes.c_int
+    # error_t sx1278_get_power(sx1278_t * sx1278, uint8_t * db);
+    RA02_DYNLIB.sx1278_get_power.argtypes = [ctypes.POINTER(sx1278_t), ctypes.POINTER(ctypes.c_uint8)]
+    RA02_DYNLIB.sx1278_get_power.restype = ctypes.c_int
 
-    # error_t ra02_set_power(ra02_t * ra02, uint8_t db);
-    RA02_DYNLIB.ra02_set_power.argtypes = [ctypes.POINTER(ra02_t), ctypes.c_uint32]
-    RA02_DYNLIB.ra02_set_power.restype = ctypes.c_int
+    # error_t sx1278_set_power(sx1278_t * sx1278, uint8_t db);
+    RA02_DYNLIB.sx1278_set_power.argtypes = [ctypes.POINTER(sx1278_t), ctypes.c_uint32]
+    RA02_DYNLIB.sx1278_set_power.restype = ctypes.c_int
 
-    # error_t ra02_set_sync_word(ra02_t * ra02, uint32_t sync_word);
-    RA02_DYNLIB.ra02_set_sync_word.argtypes = [ctypes.POINTER(ra02_t), ctypes.c_uint32]
-    RA02_DYNLIB.ra02_set_sync_word.restype = ctypes.c_int
+    # error_t sx1278_set_sync_word(sx1278_t * sx1278, uint32_t sync_word);
+    RA02_DYNLIB.sx1278_set_sync_word.argtypes = [ctypes.POINTER(sx1278_t), ctypes.c_uint32]
+    RA02_DYNLIB.sx1278_set_sync_word.restype = ctypes.c_int
 
-    # error_t ra02_set_baudrate(ra02_t * ra02, uint32_t baudrate);
-    RA02_DYNLIB.ra02_set_baudrate.argtypes = [ctypes.POINTER(ra02_t), ctypes.c_uint32]
-    RA02_DYNLIB.ra02_set_baudrate.restype = ctypes.c_int
+    # error_t sx1278_set_baudrate(sx1278_t * sx1278, uint32_t baudrate);
+    RA02_DYNLIB.sx1278_set_baudrate.argtypes = [ctypes.POINTER(sx1278_t), ctypes.c_uint32]
+    RA02_DYNLIB.sx1278_set_baudrate.restype = ctypes.c_int
 
-    # error_t ra02_set_bandwidth(ra02_t * ra02, uint32_t bandwidth);
-    RA02_DYNLIB.ra02_set_bandwidth.argtypes = [ctypes.POINTER(ra02_t), ctypes.c_uint32]
-    RA02_DYNLIB.ra02_set_bandwidth.restype = ctypes.c_int
+    # error_t sx1278_set_bandwidth(sx1278_t * sx1278, uint32_t bandwidth);
+    RA02_DYNLIB.sx1278_set_bandwidth.argtypes = [ctypes.POINTER(sx1278_t), ctypes.c_uint32]
+    RA02_DYNLIB.sx1278_set_bandwidth.restype = ctypes.c_int
 
-    # error_t ra02_set_preamble(ra02_t * ra02, uint32_t preamble);
-    RA02_DYNLIB.ra02_set_preamble.argtypes = [ctypes.POINTER(ra02_t), ctypes.c_uint32]
-    RA02_DYNLIB.ra02_set_preamble.restype = ctypes.c_int
+    # error_t sx1278_set_preamble(sx1278_t * sx1278, uint32_t preamble);
+    RA02_DYNLIB.sx1278_set_preamble.argtypes = [ctypes.POINTER(sx1278_t), ctypes.c_uint32]
+    RA02_DYNLIB.sx1278_set_preamble.restype = ctypes.c_int
 
-    # error_t ra02_set_sf(ra02_t * ra02, uint8_t sf);
-    RA02_DYNLIB.ra02_set_sf.argtypes = [ctypes.POINTER(ra02_t), ctypes.c_uint8]
-    RA02_DYNLIB.ra02_set_sf.restype = ctypes.c_int
+    # error_t sx1278_set_sf(sx1278_t * sx1278, uint8_t sf);
+    RA02_DYNLIB.sx1278_set_sf.argtypes = [ctypes.POINTER(sx1278_t), ctypes.c_uint8]
+    RA02_DYNLIB.sx1278_set_sf.restype = ctypes.c_int
 
-    # error_t ra02_get_rssi(ra02_t * ra02, int8_t * rssi);
-    RA02_DYNLIB.ra02_get_rssi.argtypes = [ctypes.POINTER(ra02_t), ctypes.POINTER(ctypes.c_uint8)]
-    RA02_DYNLIB.ra02_get_rssi.restype = ctypes.c_int
+    # error_t sx1278_get_rssi(sx1278_t * sx1278, int8_t * rssi);
+    RA02_DYNLIB.sx1278_get_rssi.argtypes = [ctypes.POINTER(sx1278_t), ctypes.POINTER(ctypes.c_uint8)]
+    RA02_DYNLIB.sx1278_get_rssi.restype = ctypes.c_int
 
-    # error_t ra02_poll_irq_flags(ra02_t * ra02);
-    RA02_DYNLIB.ra02_poll_irq_flags.argtypes = [ctypes.POINTER(ra02_t)]
-    RA02_DYNLIB.ra02_poll_irq_flags.restype = ctypes.c_int
+    # error_t sx1278_poll_irq_flags(sx1278_t * sx1278);
+    RA02_DYNLIB.sx1278_poll_irq_flags.argtypes = [ctypes.POINTER(sx1278_t)]
+    RA02_DYNLIB.sx1278_poll_irq_flags.restype = ctypes.c_int
 
-    # error_t ra02_send(ra02_t * ra02, uint8_t * buf, size_t size);
-    RA02_DYNLIB.ra02_send.argtypes = [
-        ctypes.POINTER(ra02_t),
+    # error_t sx1278_send(sx1278_t * sx1278, uint8_t * buf, size_t size);
+    RA02_DYNLIB.sx1278_send.argtypes = [
+        ctypes.POINTER(sx1278_t),
         ctypes.POINTER(ctypes.c_uint8),
         ctypes.c_size_t
     ]
-    RA02_DYNLIB.ra02_send.restype = ctypes.c_int
+    RA02_DYNLIB.sx1278_send.restype = ctypes.c_int
 
-    # error_t ra02_recv(ra02_t * ra02, uint8_t * buf, size_t * size, timeout_t * timeout);
-    RA02_DYNLIB.ra02_recv.argtypes = [
-        ctypes.POINTER(ra02_t),
+    # error_t sx1278_recv(sx1278_t * sx1278, uint8_t * buf, size_t * size, timeout_t * timeout);
+    RA02_DYNLIB.sx1278_recv.argtypes = [
+        ctypes.POINTER(sx1278_t),
         ctypes.POINTER(ctypes.c_uint8),
         ctypes.POINTER(ctypes.c_size_t),
         ctypes.POINTER(timeout_t)
     ]
-    RA02_DYNLIB.ra02_recv.restype = ctypes.c_int
+    RA02_DYNLIB.sx1278_recv.restype = ctypes.c_int

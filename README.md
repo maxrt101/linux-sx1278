@@ -1,6 +1,6 @@
-# RA-02 (SX1278) Driver for Linux
+# SX1278 (RA01/RA-02) Driver for Linux
 
-RA-01/RA-02 (SX1278) driver for Linux that uses linux spidev API.  
+SX1278 (RA01/RA-02) driver for Linux that uses linux spidev API.  
 Provides C & Python APIs to send/receive data & configure the module.  
 
 ### Usage

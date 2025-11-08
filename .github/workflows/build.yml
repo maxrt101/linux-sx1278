@@ -19,12 +19,8 @@ on:
         description: Path to LD Loader on target machine
         required: false
         default: "/lib/ld-linux-aarch64.so.1"
-      main_logs:
-        description: Logs for main.c
-        required: false
-        default: 0
-      ra02_logs:
-        description: Logs for ra02.c
+      ext_send_recv_logs:
+        description: Extended logs upon sending/receiving packets
         required: false
         default: 0
 
@@ -50,8 +46,7 @@ jobs:
         cmake -B build -S . -G "Unix Makefiles"
       env:
         LD_LOADER_PATH: ${{ inputs.ld_loader_path }}
-        LOG_ENABLE_MAIN: ${{ inputs.main_logs }}
-        LOG_ENABLE_RA02: ${{ inputs.ra02_logs }}
+        USE_RA02_EXT_LOG_SEND_RECV: ${{ inputs.ext_send_recv_logs }}
 
     - name: Build
       run: cmake --build build

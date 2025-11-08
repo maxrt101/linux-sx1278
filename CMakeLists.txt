@@ -31,6 +31,11 @@ project_add_inc_dirs(${PROJECT_DIR}/include)
 project_add_inc_recursive(${PROJECT_DIR}/include)
 project_add_src_recursive(${PROJECT_DIR}/src)
 
+project_add_define(
+  "LOG_ENABLE_main=1"
+  "LOG_ENABLE_sx1278=1"
+)
+
 project_add_compile_options(ALL
     -fpic	# Enable position independent code
     -pie	# Make elf a position independent executable
