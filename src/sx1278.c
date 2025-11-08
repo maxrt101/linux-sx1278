@@ -400,7 +400,7 @@ error_t sx1278_get_rssi(sx1278_t * trx, int16_t * rssi) {
   return E_OK;
 }
 
-error_t ra02_poll_irq_flags(sx1278_t * trx) {
+error_t sx1278_poll_irq_flags(sx1278_t * trx) {
   sx1278_read_reg(trx, SX1278_LORA_REG_IRQ_FLAGS, &trx->irq_flags);
   sx1278_write_reg(trx, SX1278_LORA_REG_IRQ_FLAGS, trx->irq_flags);
 
@@ -451,6 +451,8 @@ error_t sx1278_send(sx1278_t * trx, uint8_t * buf, size_t size) {
       break;
     }
 
+    sx1278_poll_irq_flags(trx);
+
     if (trx->irq_flags & SX1278_LORA_IRQ_FLAGS_TX_DONE) {
       break;
     }
@@ -482,7 +484,7 @@ error_t sx1278_recv(sx1278_t * trx, uint8_t * buf, size_t * size, timeout_t * ti
       return E_TIMEOUT;
     }
 
-    ra02_poll_irq_flags(trx);
+    sx1278_poll_irq_flags(trx);
 
     if (trx->irq_flags & SX1278_LORA_IRQ_FLAGS_VALID_HDR) {
       sx1278_read_reg(trx, SX1278_LORA_REG_LAST_PKT_RSSI_VAL, &trx->last_rssi);

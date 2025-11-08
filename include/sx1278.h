@@ -155,6 +155,13 @@ error_t sx1278_set_sf(sx1278_t * trx, uint8_t sf);
 error_t sx1278_get_rssi(sx1278_t * trx, int16_t * rssi);
 
 /**
+ * Polls IRQ flags
+ *
+ * @param trx Context
+ */
+error_t sx1278_poll_irq_flags(sx1278_t * trx);
+
+/**
  * Send data over radio
  *
  * @param trx RA02 Context
