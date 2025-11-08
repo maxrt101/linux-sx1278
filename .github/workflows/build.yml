@@ -1,4 +1,4 @@
-name: Build LinuxRA02
+name: Build LinuxSX1278
 
 on:
   push:
