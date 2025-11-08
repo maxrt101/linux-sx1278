@@ -38,10 +38,6 @@ error_t spi_cfg_default(spi_cfg_t * cfg) {
 error_t spi_init(spi_t * spi, spi_cfg_t * cfg, const char * dev) {
   ASSERT_RETURN(spi && cfg && dev, E_NULL);
 
-  if (spi->fd) {
-    spi_deinit(spi);
-  }
-
   memcpy(&spi->cfg, cfg, sizeof(*cfg));
   spi->fd = open(dev, O_RDWR);
 
@@ -51,8 +47,8 @@ error_t spi_init(spi_t * spi, spi_cfg_t * cfg, const char * dev) {
 error_t spi_deinit(spi_t * spi) {
   ASSERT_RETURN(spi, E_NULL);
 
-  // close(spi->fd);
-  // spi->fd = 0;
+  close(spi->fd);
+  spi->fd = 0;
 
   return E_OK;
 }
