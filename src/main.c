@@ -154,7 +154,7 @@ int main(int argc, char ** argv) {
 
     return err == E_OK ? 0 : 1;
   } else if (!strcmp(argv[index+1], "recv")) {
-    if (argc != 4) {
+    if (argc < 4) {
       log_error("Expected TIMEOUT");
       usage(argv[0]);
       return 1;
