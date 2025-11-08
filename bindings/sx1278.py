@@ -612,4 +612,4 @@ def __init__(dynlib_path: str):
     RA02_DYNLIB.log_set_level_from_str.argtypes = [
         ctypes.c_char_p
     ]
-    RA02_DYNLIB.sx1278_recv.restype = None
+    RA02_DYNLIB.log_set_level_from_str.restype = None
