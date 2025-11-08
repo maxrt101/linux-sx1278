@@ -472,6 +472,10 @@ class Sx1278:
         return bytes(buf[:size.value])
 
 
+def set_log_level(level: str):
+    RA02_DYNLIB.log_set_level_from_str(level.encode('utf-8'))
+
+
 def __init__(dynlib_path: str):
     """
     Initializes library. Loads RA02 dynamic library
@@ -601,3 +605,9 @@ def __init__(dynlib_path: str):
         ctypes.POINTER(timeout_t)
     ]
     RA02_DYNLIB.sx1278_recv.restype = ctypes.c_int
+
+    # void log_set_level(log_level_t level);
+    RA02_DYNLIB.log_set_level_from_str.argtypes = [
+        ctypes.c_char_p
+    ]
+    RA02_DYNLIB.sx1278_recv.restype = None

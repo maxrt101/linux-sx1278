@@ -222,6 +222,13 @@ void log_write_buffer(const uint8_t * buffer, size_t size);
  */
 void log_set_level(log_level_t level);
 
+/**
+ * Set minimum log level to allow messages to be printed with
+ *
+ * @param level Log Level
+ */
+void log_set_level_from_str(const char * level);
+
 #ifdef __cplusplus
 }
 #endif

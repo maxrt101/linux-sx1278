@@ -131,3 +131,8 @@ void log_write_buffer(const uint8_t * buffer, size_t size) {
 void log_set_level(log_level_t level) {
   min_log_level = level;
 }
+
+void log_set_level_from_str(const char * level) {
+  min_log_level = log_level_from_str(level);
+}
+
