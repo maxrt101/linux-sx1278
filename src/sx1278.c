@@ -467,6 +467,8 @@ error_t sx1278_recv(sx1278_t * trx, uint8_t * buf, size_t * size, timeout_t * ti
   ASSERT_RETURN(trx && buf && size && timeout, E_NULL);
   ASSERT_RETURN(*size, E_EMPTY);
 
+  log_info("Receive %s", timeout->duration);
+
   uint8_t data;
 
   trx->irq_flags = 0;
