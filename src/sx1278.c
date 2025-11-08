@@ -414,7 +414,7 @@ error_t sx1278_send(sx1278_t * trx, uint8_t * buf, size_t size) {
   ASSERT_RETURN(trx && buf, E_NULL);
   ASSERT_RETURN(size, E_INVAL);
 
-#if USE_RA02_EXT_LOG_SEND_RECV
+#if USE_SX1278_EXT_LOG_SEND_RECV
   char payload[256] = {0};
   size_t ofs = 0;
 
@@ -508,7 +508,7 @@ error_t sx1278_recv(sx1278_t * trx, uint8_t * buf, size_t * size, timeout_t * ti
         ERROR_CHECK_RETURN(sx1278_read_reg(trx, SX1278_REG_FIFO, &buf[i]));
       }
 
-#if USE_RA02_EXT_LOG_SEND_RECV
+#if USE_SX1278_EXT_LOG_SEND_RECV
       char payload[256] = {0};
       size_t ofs = 0;
 

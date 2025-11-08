@@ -45,8 +45,8 @@ jobs:
         export PATH="$PATH"
         cmake -B build -S . -G "Unix Makefiles"
       env:
-        LD_LOADER_PATH: ${{ inputs.ld_loader_path }}
-        USE_RA02_EXT_LOG_SEND_RECV: ${{ inputs.ext_send_recv_logs }}
+        LD_LOADER_PATH: ${{ inputs.ld_loader_path == '' && '/lib/ld-linux-aarch64.so.1' || inputs.ld_loader_path }}
+        USE_SX1278_EXT_LOG_SEND_RECV: ${{ inputs.ext_send_recv_logs == '' && '0' || inputs.ext_send_recv_logs }}
 
     - name: Build
       run: cmake --build build
