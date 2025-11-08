@@ -163,9 +163,10 @@ static error_t sx1278_read_reg(sx1278_t * trx, uint8_t reg, uint8_t * value) {
  * Write buffer to register using SPI bus
  */
 static error_t sx1278_write_burst(sx1278_t * trx, uint8_t addr, uint8_t * buf, size_t size) {
-  uint8_t data = addr | 0x80;
+  uint8_t buffer[64] = {addr | 0x80};
+  memcpy(&buffer[1], buf, size);
 
-  return spi_transcieve(trx->spi, buf, NULL, size + 1);
+  return spi_transcieve(trx->spi, buffer, NULL, size + 1);
 }
 
 /**
